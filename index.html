@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Canvas Example</title>
+</head>
+<link rel="stylesheet" href="style.css">
+<body><div class="navbar">
+    <nav>
+        <h3>Bubbles App</h3>
+    </nav>
+</div>
+<div class="box">
+    <canvas id="myCanvas" width="800" height="400"></canvas>
+    <button onclick="reset()" class="btn">Reset</button>
+</div>
+   
+
+    <script>
+        var canvas = document.getElementById('myCanvas');
+        var ctx = canvas.getContext('2d');
+// taking the colors,x,y cordordinates of circles and arrows in arrays
+        var Circle_Colors = ['red', 'green', 'blue', 'yellow'];
+        var X_Circle = [50, 50, 50, 50];
+        var Y_Circle = [50, 150, 250, 350];
+        var X_Arrow = [700, 700, 700, 700];
+        var Y_Arrow = [50, 150, 250, 350];
+        var arrowMoving = [false, false, false, false];
+// creating a function to draw the circles and arrows
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+// using for loop for reducing the code redundancy
+            for (var i = 0; i < Circle_Colors.length; i++) {
+                // code for creating circles
+                ctx.beginPath();
+                ctx.arc(X_Circle[i], Y_Circle[i], 30, 0, 2 * Math.PI);
+                ctx.fillStyle = Circle_Colors[i];
+                ctx.fill();
+                ctx.stroke();
+            //  code for creating arrows
+                ctx.beginPath();
+                ctx.moveTo(X_Arrow[i],Y_Arrow[i]+5);
+                ctx.lineTo(X_Arrow[i],Y_Arrow[i]+15);
+                ctx.lineTo(X_Arrow[i]-20,Y_Arrow[i]);
+                ctx.lineTo(X_Arrow[i],Y_Arrow[i]-15);
+                ctx.lineTo(X_Arrow[i],Y_Arrow[i]-5);
+                ctx.lineTo(X_Arrow[i]+50,Y_Arrow[i]-5);
+                ctx.lineTo(X_Arrow[i]+50,Y_Arrow[i]+5);
+                ctx.lineTo(X_Arrow[i],Y_Arrow[i]+5);
+                ctx.closePath();
+                ctx.fillStyle="black";
+                ctx.fill();
+                ctx.stroke();
+                // Logic for changing the color of circles while arrow touches the circle
+                if (arrowMoving[i]) {
+                    X_Arrow[i] -= 5;
+                    if (X_Arrow[i] <= X_Circle[i]+50) {
+                        arrowMoving[i] = false;
+                        Circle_Colors[i] = 'grey';
+                    }
+                }
+            }
+
+            requestAnimationFrame(draw);
+        }
+
+        draw();
+
+        // creating the animation for the moving of arrow
+        canvas.addEventListener('click', function(event) {
+            var x = event.clientX - canvas.offsetLeft;
+            var y = event.clientY - canvas.offsetTop;
+
+            for (var i = 0; i < Circle_Colors.length; i++) {
+                if (Math.sqrt(Math.pow(x - X_Circle[i], 2) + Math.pow(y - Y_Circle[i], 2)) <= 30) {
+                    arrowMoving[i] = true;
+                    break;
+                }
+            }
+        });
+        // creating the function for reset button
+
+        function reset() {
+            Circle_Colors = ['red', 'green', 'blue', 'yellow'];
+            X_Arrow = [700, 700, 700, 700];;
+            arrowMoving = [false, false, false, false];
+        }
+    </script>
+</body>
+</html>
